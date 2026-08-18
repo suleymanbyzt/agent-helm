@@ -164,7 +164,19 @@ git clone https://github.com/suleymanbyzt/agent-helm
 ./agent-helm/install.sh /path/to/your-project
 ```
 
-Either way, you get:
+### Option C — global (just you, all your projects)
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/suleymanbyzt/agent-helm/main/install.sh | bash -s -- --global
+```
+
+Adds the constitution to `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`
+(inside clearly marked blocks — your existing personal rules are untouched)
+and installs the skills user-wide. Applies to every project **you** open;
+teammates are not affected. Prefer the per-project install for team-wide
+rules — it travels with the repo.
+
+With Options A and B, you get:
 
 ```
 your-project/
@@ -197,6 +209,22 @@ the advisor loop):
 
 Using Codex or another agent without an advisor? The advisor steps become
 "plan approval by you" — the loop stays the same.
+
+### Uninstall
+
+Removes everything agent-helm installed — **except your journal entries and
+briefs**, which are your project's history and stay where they are. Files you
+modified are also left in place, with a warning.
+
+```bash
+/path/to/agent-helm/install.sh --uninstall          # from a project
+/path/to/agent-helm/install.sh --global --uninstall # global install
+```
+
+```powershell
+\path\to\agent-helm\install.ps1 -Uninstall           # from a project
+\path\to\agent-helm\install.ps1 -Global -Uninstall   # global install
+```
 
 ## The skills
 
