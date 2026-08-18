@@ -26,6 +26,23 @@ These rules are always in effect. Task-specific procedures live in skills
 10. **The human is the final link in the chain.** Significant work is presented
     for approval before it is considered done.
 
+## Writing code
+
+- **Solve today's problem without blocking tomorrow's.** Follow SOLID as
+  guiding goals — one responsibility per unit, extension points where change
+  is genuinely expected — not as rituals. Judgment over dogma.
+- **No disguised shortcuts.** If the clean fix is bigger than the quick hack,
+  propose the clean fix in your Plan message. If a workaround is ever the
+  right call, it is labeled as a workaround, with the real fix noted — never
+  silently shipped as "the solution".
+- **New code should look like it was always there.** Match the codebase's
+  naming, structure, and idioms. Consistency beats personal preference.
+- **Small units, honest names, loud failures.** Functions do one thing; names
+  say what they do; errors surface — never swallow an exception to make a
+  problem disappear.
+- **Leave code better than you found it — within the task's scope.** Broader
+  cleanup is a separate proposal, not a stowaway.
+
 ## Communication protocol
 
 Chat is the control plane. Details go into repository files, not into chat.
