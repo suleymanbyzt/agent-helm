@@ -19,6 +19,21 @@ until your only remaining job is typing *"ok, go ahead."*
 
 **agent-helm keeps you in the loop without drowning you in it.**
 
+## Who this is for
+
+- Developers who want AI speed **without losing grip on their own codebase** —
+  you make the calls, the agent does the typing.
+- People who'd rather read a **3-line plan** than a 2,000-word report — and
+  rather answer one sharp question than scroll past ten vague ones.
+- Anyone tired of drowning in detail until they lose the flow and rubber-stamp
+  whatever the agent suggests.
+- Teams whose code must still be **explainable months later** — by a human.
+
+**Probably not for you** if "it runs" is the whole goal. Pure vibe coding —
+prompt, accept, ship — is a legitimate way to prototype, but agent-helm's
+approval loop and journal will just feel like friction there. Come back when
+the prototype becomes a product.
+
 ## How it works
 
 ```mermaid
@@ -126,19 +141,30 @@ Touching migrations, auth, payments, or a public API escalates
 Works with **Claude Code**, **OpenAI Codex**, and anything that reads the open
 `AGENTS.md` standard (Cursor, Copilot, ...). Same files, no duplication.
 
+### Option A — one command (recommended)
+
+Run **inside your project directory**:
+
+**macOS / Linux**
+
 ```bash
-git clone https://github.com/<you>/agent-helm
-cd your-project
-/path/to/agent-helm/install.sh
+curl -fsSL https://raw.githubusercontent.com/suleymanbyzt/agent-helm/main/install.sh | bash
 ```
 
-Windows:
+**Windows (PowerShell)**
 
 ```powershell
-\path\to\agent-helm\install.ps1 -Target .
+irm https://raw.githubusercontent.com/suleymanbyzt/agent-helm/main/install.ps1 | iex
 ```
 
-You get:
+### Option B — clone first, look around, then install
+
+```bash
+git clone https://github.com/suleymanbyzt/agent-helm
+./agent-helm/install.sh /path/to/your-project
+```
+
+Either way, you get:
 
 ```
 your-project/

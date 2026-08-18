@@ -3,8 +3,18 @@
 # Usage: ./install.sh [target-project-dir]   (default: current directory)
 set -euo pipefail
 
-SRC="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+SRC="$(cd "$(dirname "${BASH_SOURCE[0]:-$0}")" 2>/dev/null && pwd || pwd)"
 TARGET="$(cd "${1:-.}" && pwd)"
+
+# Standalone mode (curl | bash): no repo files next to the script — fetch them.
+if [ ! -f "$SRC/core/AGENTS.md" ]; then
+  TARBALL="${AGENT_HELM_TARBALL:-https://github.com/suleymanbyzt/agent-helm/archive/refs/heads/main.tar.gz}"
+  TMP="$(mktemp -d)"
+  trap 'rm -rf "$TMP"' EXIT
+  echo "Fetching agent-helm..."
+  curl -fsSL "$TARBALL" | tar -xz -C "$TMP" --strip-components=1
+  SRC="$TMP"
+fi
 
 echo "Installing agent-helm into: $TARGET"
 

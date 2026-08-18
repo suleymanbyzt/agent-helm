@@ -6,6 +6,20 @@ $ErrorActionPreference = "Stop"
 $Src = $PSScriptRoot
 $Target = (Resolve-Path $Target).Path
 
+# Standalone mode (irm | iex): no repo files next to the script — fetch them.
+if (-not $Src -or -not (Test-Path "$Src\core\AGENTS.md")) {
+    $zipUrl = if ($env:AGENT_HELM_ZIP) { $env:AGENT_HELM_ZIP }
+              else { "https://github.com/suleymanbyzt/agent-helm/archive/refs/heads/main.zip" }
+    $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("agent-helm-" + [guid]::NewGuid())
+    New-Item -ItemType Directory -Path $tmp | Out-Null
+    Write-Host "Fetching agent-helm..."
+    Invoke-WebRequest $zipUrl -OutFile "$tmp\repo.zip"
+    Expand-Archive "$tmp\repo.zip" -DestinationPath $tmp
+    $Src = (Get-ChildItem $tmp -Directory |
+        Where-Object { Test-Path "$($_.FullName)\core\AGENTS.md" } |
+        Select-Object -First 1).FullName
+}
+
 Write-Host "Installing agent-helm into: $Target"
 
 # 1. AGENTS.md — the constitution (read natively by Codex, Cursor, Copilot, ...)
