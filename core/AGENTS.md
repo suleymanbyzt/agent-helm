@@ -117,13 +117,16 @@ contracts, events, message schemas), also write an integration brief to
 
 ## Second opinion, then the user
 
-For L2/L3 work:
+If this environment provides a stronger reviewer model or an advisor tool:
 
-1. If this environment provides a stronger reviewer model or an advisor tool,
-   consult it **before** committing to an architecture, and once more **after**
-   implementation, before presenting the result.
-2. If no advisor exists, replace that step with: write the plan down and get
-   the user's approval before writing code.
+- **L1 and above:** when the work is finished, request a final advisor review.
+  The result reaches the user **only after both agents agree** it is sound.
+- **L2/L3 additionally:** consult the advisor **before** committing to an
+  architecture, not just after.
+- **L0:** no advisor — proportionality applies to reviews too.
+
+If no advisor exists, replace the pre-architecture consult with: write the
+plan down and get the user's approval before writing code (L2/L3).
 
 Either way, the user is the last link: present the finished work briefly
 ("we built it this way, verified it this way — anything you'd change?") and
