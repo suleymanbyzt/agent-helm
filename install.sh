@@ -22,16 +22,19 @@ else
   echo "  + AGENTS.md"
 fi
 
-# 2. CLAUDE.md — Claude Code reads CLAUDE.md; import AGENTS.md (official pattern)
+# 2. CLAUDE.md — imports AGENTS.md (official pattern) + Claude-specific setup
 if [ -f "$TARGET/CLAUDE.md" ]; then
-  if ! grep -q "@AGENTS.md" "$TARGET/CLAUDE.md"; then
-    echo "  ! CLAUDE.md already exists. Add this line to it yourself: @AGENTS.md"
+  if cmp -s "$SRC/core/CLAUDE.md" "$TARGET/CLAUDE.md"; then
+    echo "  = CLAUDE.md already up to date"
+  elif grep -q "@AGENTS.md" "$TARGET/CLAUDE.md"; then
+    echo "  = CLAUDE.md exists and imports AGENTS.md — keeping yours."
+    echo "    (See core/CLAUDE.md for the recommended advisor-loop setup.)"
   else
-    echo "  = CLAUDE.md already imports AGENTS.md"
+    echo "  ! CLAUDE.md already exists. Add this line to it yourself: @AGENTS.md"
   fi
 else
-  printf '@AGENTS.md\n' > "$TARGET/CLAUDE.md"
-  echo "  + CLAUDE.md (imports AGENTS.md)"
+  cp "$SRC/core/CLAUDE.md" "$TARGET/CLAUDE.md"
+  echo "  + CLAUDE.md (imports AGENTS.md + advisor loop)"
 fi
 
 # 3. Skills — same files, both agents' native locations

@@ -24,17 +24,22 @@ if (Test-Path "$Target\AGENTS.md") {
     Write-Host "  + AGENTS.md"
 }
 
-# 2. CLAUDE.md — Claude Code reads CLAUDE.md; import AGENTS.md (official pattern)
+# 2. CLAUDE.md — imports AGENTS.md (official pattern) + Claude-specific setup
 if (Test-Path "$Target\CLAUDE.md") {
+    $srcHash = (Get-FileHash "$Src\core\CLAUDE.md").Hash
+    $dstHash = (Get-FileHash "$Target\CLAUDE.md").Hash
     $claudeMd = Get-Content "$Target\CLAUDE.md" -Raw
-    if ($claudeMd -notmatch "@AGENTS\.md") {
-        Write-Host "  ! CLAUDE.md already exists. Add this line to it yourself: @AGENTS.md"
+    if ($srcHash -eq $dstHash) {
+        Write-Host "  = CLAUDE.md already up to date"
+    } elseif ($claudeMd -match "@AGENTS\.md") {
+        Write-Host "  = CLAUDE.md exists and imports AGENTS.md - keeping yours."
+        Write-Host "    (See core/CLAUDE.md for the recommended advisor-loop setup.)"
     } else {
-        Write-Host "  = CLAUDE.md already imports AGENTS.md"
+        Write-Host "  ! CLAUDE.md already exists. Add this line to it yourself: @AGENTS.md"
     }
 } else {
-    Set-Content -Path "$Target\CLAUDE.md" -Value "@AGENTS.md"
-    Write-Host "  + CLAUDE.md (imports AGENTS.md)"
+    Copy-Item "$Src\core\CLAUDE.md" "$Target\CLAUDE.md"
+    Write-Host "  + CLAUDE.md (imports AGENTS.md + advisor loop)"
 }
 
 # 3. Skills — same files, both agents' native locations

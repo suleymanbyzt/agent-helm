@@ -22,16 +22,32 @@ until your only remaining job is typing *"ok, go ahead."*
 ## How it works
 
 ```mermaid
-flowchart TD
-    A["🧑‍💻 You ask for something"] --> B{"Agent reads the code,<br/>classifies the risk"}
-    B -->|"trivial (L0)"| C["Does it.<br/>One-line confirmation."]
-    B -->|"anything real (L1–L3)"| D["📨 Short proposal in chat:<br/><b>Problem · Plan · Risk · Question</b><br/>3 lines, plain language"]
-    D --> E{"🧑‍💻 Your call"}
-    E -->|"approved"| F["Builds it —<br/>with tests, evidence-first,<br/>no assumptions"]
-    F --> G["🔍 Second opinion:<br/>a stronger model reviews the work<br/>(no advisor? plan approval instead)"]
-    G --> H["🧑‍💻 Back to you — the final link:<br/><i>'Built it this way, verified it this way.<br/>Anything you'd change?'</i>"]
-    H --> I["📓 Half-page record written to<br/><code>docs/agent-journal/</code>"]
+sequenceDiagram
+    autonumber
+    actor You as 🧑‍💻 You
+    participant Agent as 🤖 Agent
+    participant Advisor as 🔍 Stronger model
+
+    You->>Agent: "Order cancellation has a race condition — fix it."
+    Agent->>Agent: Reads the code · gathers evidence · classifies risk
+
+    alt trivial change (L0)
+        Agent->>You: Done. One line. That's it.
+    else anything real (L1–L3)
+        Agent->>Advisor: Sanity-check the approach
+        Agent->>You: Problem · Plan · Risk · Question — 3 short lines
+        You->>Agent: "Approved." (one word is enough)
+        Agent->>Agent: Regression test first → fix → full suite green
+        Agent->>Advisor: Review the finished work
+        Agent->>You: Done · Verified · Recorded — anything you'd change?
+        You->>Agent: Final word. Always yours.
+    end
+
+    Note over Agent: 📓 half-page record →<br/>docs/agent-journal/
 ```
+
+*(No advisor in your setup — e.g. plain Codex? Steps 3 and 8 become
+"plan approval by you". The loop stays the same.)*
 
 Two rules make this work:
 
@@ -135,6 +151,26 @@ your-project/
 ```
 
 Commit the files — the same rules then apply to every teammate's agent.
+
+### Recommended Claude Code setup
+
+These are settings **you** configure — they don't belong in `CLAUDE.md`
+(that file only carries instructions that change the model's behavior, like
+the advisor loop):
+
+- **Main model: mid-tier.** (Current recommendation: Sonnet.) The heavy
+  thinking is delegated to the advisor, so you don't pay flagship prices for
+  routine implementation.
+- **Advisor: the strongest model available.** (Current recommendation:
+  Fable tier.) Consulted twice per risky task: before the plan, and for the
+  final review. Code reaches you only after **both models agree**.
+- **Cap the context window at ~500K** even if 1M is offered. Very long
+  contexts make models lose the thread, follow instructions less reliably,
+  and hallucinate more — while costing more and responding slower. History
+  belongs in `docs/agent-journal/`, not in the context window.
+
+Using Codex or another agent without an advisor? The advisor steps become
+"plan approval by you" — the loop stays the same.
 
 ## The skills
 
