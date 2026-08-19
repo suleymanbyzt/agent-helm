@@ -23,7 +23,7 @@ TARGET="$(cd "${TARGET_ARG:-.}" && pwd)"
 
 # Standalone mode (curl | bash): no repo files next to the script — fetch them.
 if [ ! -f "$SRC/core/AGENTS.md" ]; then
-  TARBALL="${AGENT_HELM_TARBALL:-https://github.com/suleymanbyzt/agent-helm/archive/refs/heads/main.tar.gz}"
+  TARBALL="${AGENT_HELM_TARBALL:-https://github.com/suleymanbyzt/agent-helm/archive/refs/heads/master.tar.gz}"
   TMP="$(mktemp -d)"
   trap 'rm -rf "$TMP"' EXIT
   echo "Fetching agent-helm..."

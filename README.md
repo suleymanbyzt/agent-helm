@@ -148,13 +148,13 @@ Run **inside your project directory**:
 **macOS / Linux**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/suleymanbyzt/agent-helm/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/suleymanbyzt/agent-helm/master/install.sh | bash
 ```
 
 **Windows (PowerShell)**
 
 ```powershell
-irm https://raw.githubusercontent.com/suleymanbyzt/agent-helm/main/install.ps1 | iex
+irm https://raw.githubusercontent.com/suleymanbyzt/agent-helm/master/install.ps1 | iex
 ```
 
 ### Option B — clone first, look around, then install
@@ -167,7 +167,7 @@ git clone https://github.com/suleymanbyzt/agent-helm
 ### Option C — global (just you, all your projects)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/suleymanbyzt/agent-helm/main/install.sh | bash -s -- --global
+curl -fsSL https://raw.githubusercontent.com/suleymanbyzt/agent-helm/master/install.sh | bash -s -- --global
 ```
 
 Adds the constitution to `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`

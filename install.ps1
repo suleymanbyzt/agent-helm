@@ -13,7 +13,7 @@ $Target = (Resolve-Path $Target).Path
 # Standalone mode (irm | iex): no repo files next to the script — fetch them.
 if (-not $Src -or -not (Test-Path "$Src\core\AGENTS.md")) {
     $zipUrl = if ($env:AGENT_HELM_ZIP) { $env:AGENT_HELM_ZIP }
-              else { "https://github.com/suleymanbyzt/agent-helm/archive/refs/heads/main.zip" }
+              else { "https://github.com/suleymanbyzt/agent-helm/archive/refs/heads/master.zip" }
     $tmp = Join-Path ([System.IO.Path]::GetTempPath()) ("agent-helm-" + [guid]::NewGuid())
     New-Item -ItemType Directory -Path $tmp | Out-Null
     Write-Host "Fetching agent-helm..."
