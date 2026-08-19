@@ -1,79 +1,66 @@
-# agent-helm
+<p align="center">
+  <img src="assets/agent-helm-logo.png" alt="agent-helm — AI moves fast. You stay at the helm." width="720">
+</p>
 
-> **You ask. The agent proposes — in three short lines. You decide. It builds,
-> verifies, records. You stay at the helm.**
+<p align="center">
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-blue.svg" alt="MIT License"></a>
+  <img src="https://img.shields.io/badge/works%20with-Claude%20Code%20·%20Codex%20·%20AGENTS.md-6f42c1" alt="Works with Claude Code, Codex, AGENTS.md">
+  <img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg" alt="PRs welcome">
+</p>
 
-## Sound familiar?
+**One prompt in. Two models argue it out. One clean, reviewed result back — and
+the final call is always yours.**
 
-- The agent asks *"should I go with option A or B?"* — and you answer
-  *"you know best"*, because you lost the thread three walls of text ago.
-- A feature gets built. It works. And you realize **you can no longer explain
-  your own codebase.**
-- The agent "fixes" a bug by loosening the test that caught it.
-- You come back the next day and neither you nor the agent remembers why
-  yesterday's decision was made.
+## The problem
 
-That's not a coding problem. It's a **control** problem: the AI writes faster
-than you can stay informed, so you slowly drift out of your own project —
-until your only remaining job is typing *"ok, go ahead."*
+AI coding agents write faster than you can stay informed. So you slowly drift
+out of your own project:
 
-**agent-helm keeps you in the loop without drowning you in it.**
+- The agent asks *"option A or B?"* — you answer *"you know best"*, because you
+  lost the thread three walls of text ago.
+- A feature ships. It works. And you realize **you can no longer explain your
+  own codebase.**
+- A "bug fix" turns out to be a loosened test.
 
-## Who this is for
+That's not a coding problem, it's a **control** problem. agent-helm fixes the
+control loop, not the model.
 
-- Developers who want AI speed **without losing grip on their own codebase** —
-  you make the calls, the agent does the typing.
-- People who'd rather read a **3-line plan** than a 2,000-word report — and
-  rather answer one sharp question than scroll past ten vague ones.
-- Anyone tired of drowning in detail until they lose the flow and rubber-stamp
-  whatever the agent suggests.
-- Teams whose code must still be **explainable months later** — by a human.
+## The idea: two models, one standard, you decide
 
-**Probably not for you** if "it runs" is the whole goal. Pure vibe coding —
-prompt, accept, ship — is a legitimate way to prototype, but agent-helm's
-approval loop and journal will just feel like friction there. Come back when
-the prototype becomes a product.
+In most setups, one model plans the work, writes the code, reviews its own
+code, and grades its own homework. agent-helm splits the roles:
 
-## How it works
+| Role | Who | Job |
+|------|-----|-----|
+| **Builder** | mid-tier model | plans, writes tests, implements, iterates |
+| **Critic** | strongest model available | challenges the design, reviews the result, raises the bar |
+| **You** | the engineer | set the direction, approve the plan, make the final call |
 
-```mermaid
-sequenceDiagram
-    autonumber
-    actor You as 🧑‍💻 You
-    participant Agent as 🤖 Agent
-    participant Advisor as 🔍 Stronger model
+Work passes through **two gates**:
 
-    You->>Agent: "Order cancellation has a race condition — fix it."
-    Agent->>Agent: Reads the code · gathers evidence · classifies risk
+1. **Design Gate** — before any code, the builder proposes an approach and the
+   critic challenges it. They iterate **until they agree**, then you get a
+   3-line plan to approve.
+2. **Review Gate** — after implementation, the critic reviews the code, the
+   tests, and the results. Issues are fixed **until both models sign off**.
 
-    alt trivial change (L0)
-        Agent->>You: Done. One line. That's it.
-    else anything real (L1–L3)
-        Agent->>Advisor: Sanity-check the approach
-        Agent->>You: Problem · Plan · Risk · Question — 3 short lines
-        You->>Agent: "Approved." (one word is enough)
-        Agent->>Agent: Regression test first → fix → full suite green
-        Agent->>Advisor: Review the finished work
-        Agent->>You: Done · Verified · Recorded — anything you'd change?
-        You->>Agent: Final word. Always yours.
-    end
+Nothing reaches you until both models agree — so what does reach you is short:
+one plan to approve, one result to accept. Disagreements are settled between
+the models, off your screen; a disagreement they *can't* settle comes to you
+as one sharp question, never silently swallowed.
 
-    Note over Agent: 📓 half-page record →<br/>docs/agent-journal/
-```
+<p align="center">
+  <img src="assets/how-it-works.png" alt="agent-helm workflow: Understand → Design Gate → Approve → Implement → Review Gate → Report. Trivial L0 changes take the fast path.">
+</p>
 
-*(No advisor in your setup — e.g. plain Codex? Steps 3 and 8 become
-"plan approval by you". The loop stays the same.)*
+Trivial changes (a rename, a typo) skip the gates entirely — ceremony is
+proportional to risk. And with an agent that has no second model (plain
+Codex), the critic's gates become *your* plan approval: the loop holds, the
+reviewer is you.
 
-Two rules make this work:
+## What you see in chat
 
-1. **Chat is the control plane.** Short, decision-ready messages only.
-   Details live in files, not in your face.
-2. **You are the last link in the chain.** Nothing risky starts without your
-   word, and nothing counts as done until you've seen it.
-
-## What chat looks like
-
-Instead of a 2,000-word essay, you get this:
+Instead of a 2,000-word essay:
 
 ```
 Problem:  Order cancellation has a race condition under concurrent requests.
@@ -83,7 +70,7 @@ Risk:     L2 — touches concurrency. Waiting for your go-ahead.
 Question: None.
 ```
 
-You reply in one line. It gets to work. When it's done:
+You answer in one line. When it's done — and only after both models agree:
 
 ```
 Done:     Race fixed at the state-transition level.
@@ -91,158 +78,145 @@ Verified: New regression test fails on old code, passes now; full suite green.
 Recorded: docs/agent-journal/2026-08-18-bug-order-cancel-race.md
 ```
 
+## Risk decides the process
+
+| Level | Example | What happens |
+|-------|---------|--------------|
+| **L0** | rename, typo | Just does it. One line back. |
+| **L1** | local feature, ordinary bug | Short plan → build with tests → Review Gate → report |
+| **L2** | refactor, concurrency, persistence | Design Gate + safety tests **before** any change → your approval |
+| **L3** | auth, money, migrations, breaking APIs | Your explicit sign-off **before any code** |
+
+Migrations, auth, payments, public APIs escalate **automatically** — the agent
+doesn't get to decide that part. When in doubt, it must go up a level.
+
+## Evidence, not vibes
+
+- No code based on guesses — claims are proven by running, testing, or reading
+  source, down to the **dependency's source** when the docs are wrong.
+- Bugs are **reproduced first** and get a failing regression test before the fix.
+- Refactors start with a test safety net pinning current behavior.
+- Tests are never weakened to get to green.
+- Anything unproven is labeled `Assumption: ...` — never smuggled in as fact.
+
 ## Your project remembers
 
-Every finished task leaves a **half-page record** — what was asked, the plan,
-what was done, how it was verified:
+Every finished task leaves a half-page record — what was asked, the plan, what
+was done, how it was verified:
 
 ```
 docs/
 ├── agent-journal/
-│   ├── 2026-08-14-feature-invoice-export.md
 │   ├── 2026-08-16-refactor-payment-service.md
 │   └── 2026-08-18-bug-order-cancel-race.md
 └── briefs/
     └── invoice-export-api.md   ← hand this to your mobile/frontend teammate
 ```
 
-Six months later, *"why does this work this way?"* has an answer you can read
-in thirty seconds — and so can the agent's next session. When an API changes,
-the agent also writes an **integration brief** the person on the other side
-can implement from directly, without reading your code.
-
-## Effort proportional to risk
-
-No ceremony for a typo. No cowboy coding on a migration.
-
-| Level | Example | What happens |
-|-------|---------|--------------|
-| **L0** | rename, typo | Just does it |
-| **L1** | local feature, ordinary bug | Short plan → proceeds → tests → journal |
-| **L2** | refactor, concurrency, persistence | Safety tests **before** any change → your approval |
-| **L3** | auth, money, migrations, breaking APIs | Your explicit sign-off **before any code** |
-
-Touching migrations, auth, payments, or a public API escalates
-**automatically** — the agent doesn't get to decide that part.
-
-## Evidence, not vibes
-
-- No code based on guesses. Claims are proven: run it, test it, read the
-  source — down to the **dependency's source code** when the docs are wrong.
-- Refactors start with a test safety net that pins current behavior **before**
-  a single line moves.
-- Bugs get reproduced and get a failing regression test **before** the fix.
-- Tests are never weakened to get to green.
-- Whatever remains unproven is labeled: `Assumption: ...` — never smuggled in
-  as fact.
+Six months later, *"why does this work this way?"* is a thirty-second read —
+for you **and** for the agent's next session. When an API contract changes,
+the agent also writes an **integration brief** the other team can implement
+from without reading your code.
 
 ## Install
 
 Works with **Claude Code**, **OpenAI Codex**, and anything that reads the open
-`AGENTS.md` standard (Cursor, Copilot, ...). Same files, no duplication.
+[AGENTS.md](https://agents.md) standard (Cursor, Copilot, ...). Same files, no
+duplication.
 
-### Option A — one command (recommended)
-
-Run **inside your project directory**:
-
-**macOS / Linux**
+**Option A — one command, inside your project** *(recommended)*
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/suleymanbyzt/agent-helm/master/install.sh | bash
 ```
 
-**Windows (PowerShell)**
-
 ```powershell
 irm https://raw.githubusercontent.com/suleymanbyzt/agent-helm/master/install.ps1 | iex
 ```
 
-### Option B — clone first, look around, then install
+**Option B — clone first, look around, then install**
 
 ```bash
 git clone https://github.com/suleymanbyzt/agent-helm
 ./agent-helm/install.sh /path/to/your-project
 ```
 
-### Option C — global (just you, all your projects)
+**Option C — global: just you, all your projects**
 
 ```bash
 curl -fsSL https://raw.githubusercontent.com/suleymanbyzt/agent-helm/master/install.sh | bash -s -- --global
 ```
 
-Adds the constitution to `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`
-(inside clearly marked blocks — your existing personal rules are untouched)
-and installs the skills user-wide. Applies to every project **you** open;
-teammates are not affected. Prefer the per-project install for team-wide
-rules — it travels with the repo.
-
-With Options A and B, you get:
+Option A/B drop these into your project (commit them — the rules then apply to
+every teammate's agent):
 
 ```
 your-project/
-├── AGENTS.md              ← the engineering constitution (~130 lines, that's all)
-├── CLAUDE.md              ← one line: @AGENTS.md
+├── AGENTS.md              ← the engineering constitution (~150 lines, that's all)
+├── CLAUDE.md              ← @AGENTS.md + the advisor loop
 ├── .agents/skills/        ← for Codex
 ├── .claude/skills/        ← for Claude Code
-├── templates/             ← journal + brief formats
-└── docs/agent-journal/    ← your project's memory starts here
+├── templates/             ← journal + brief + decision formats
+└── docs/
+    ├── agent-journal/     ← your project's memory starts here
+    ├── briefs/            ← integration briefs for other teams
+    └── decisions/         ← architectural decisions + rejected alternatives
 ```
 
-Commit the files — the same rules then apply to every teammate's agent.
+Option C adds the same rules to `~/.claude/CLAUDE.md` and `~/.codex/AGENTS.md`
+inside clearly marked blocks — your personal rules stay untouched.
 
-### Recommended Claude Code setup
-
-These are settings **you** configure — they don't belong in `CLAUDE.md`
-(that file only carries instructions that change the model's behavior, like
-the advisor loop):
-
-- **Main model: mid-tier.** (Current recommendation: Sonnet.) The heavy
-  thinking is delegated to the advisor, so you don't pay flagship prices for
-  routine implementation.
-- **Advisor: the strongest model available.** (Current recommendation:
-  Fable tier.) Consulted twice per risky task: before the plan, and for the
-  final review. Code reaches you only after **both models agree**.
-- **Cap the context window at ~500K** even if 1M is offered. Very long
-  contexts make models lose the thread, follow instructions less reliably,
-  and hallucinate more — while costing more and responding slower. History
-  belongs in `docs/agent-journal/`, not in the context window.
-
-Using Codex or another agent without an advisor? The advisor steps become
-"plan approval by you" — the loop stays the same.
-
-### Uninstall
-
-Removes everything agent-helm installed — **except your journal entries and
-briefs**, which are your project's history and stay where they are. Files you
-modified are also left in place, with a warning.
+**Uninstall** — removes everything agent-helm installed, except your journal
+entries (they're your project's history) and any file you modified:
 
 ```bash
-/path/to/agent-helm/install.sh --uninstall          # from a project
-/path/to/agent-helm/install.sh --global --uninstall # global install
+./install.sh --uninstall            # from a project
+./install.sh --global --uninstall   # global
 ```
 
-```powershell
-\path\to\agent-helm\install.ps1 -Uninstall           # from a project
-\path\to\agent-helm\install.ps1 -Global -Uninstall   # global install
-```
+### Recommended setup (Claude Code) — max output, min tokens
+
+Two minutes, three settings:
+
+1. **`/model`** → pick a **mid-tier model as the builder** (current
+   recommendation: Sonnet). It does the typing — routine implementation
+   doesn't need flagship prices.
+2. **`/advisor`** → set the **strongest model as the critic** (current
+   recommendation: Fable). It's only called at the two gates — design and
+   review — where judgment actually matters.
+3. **Cap the context window** (e.g. ~500K even if 1M is offered). Very long
+   contexts lose the thread and hallucinate more; history belongs in
+   `docs/agent-journal/`, not in the window.
+
+Why this combo works: you pay flagship prices only for the few thousand
+tokens of judgment, not for every line of code — while every result still
+ships critic-approved. Fast to run, cheap to iterate, and mistakes get
+caught between the models before they ever reach you.
+
+*(Model names are today's recommendation, not a requirement — when newer
+models ship, the principle stays: mid-tier builder + strongest critic.)*
 
 ## The skills
 
 | Skill | What it enforces |
 |-------|------------------|
-| `feature-development` | Understand → short plan → your approval → build with tests → record |
+| `feature-development` | Understand → plan → your approval → build with tests → record |
 | `bug-fix` | Reproduce first → root cause, not symptom → regression test → fix |
 | `safe-refactor` | Safety net **before** touching code → small steps → prove behavior preserved |
+| `performance-investigation` | Measure → prove the bottleneck → fix → measure again. No guess-optimization |
+| `code-review` | Risk-ordered reading, evidence-backed findings, triage — no "LGTM" on skimmed diffs |
+| `dependency-upgrade` | Release notes read → breaking changes mapped to call sites → green suite proves it. "It compiles" ≠ "it works" |
 | `verify-work` | Never says "done" without having watched it work |
 | `integration-brief` | API changed? The other team gets a brief, not a code tour |
+| `record-decision` | Real architectural choice? The decision, the reasons, and the rejected alternatives get written down |
 
 ## What agent-helm is not
 
 - **Not a methodology cult.** No forced TDD everywhere, no spec documents for
   a one-line fix. Effort scales with risk.
-- **Not a magic leash.** Its guarantee is *visibility*: risk declared in chat
-  where you can veto it, decisions written where you can read them, claims
-  backed by evidence you can check.
+- **Not a magic leash.** Its guarantee is *visibility*: risk declared where
+  you can veto it, decisions written where you can read them, claims backed
+  by evidence you can check. And a second model paid to disagree.
 - **Not vendor-locked.** Plain markdown on open standards
   ([AGENTS.md](https://agents.md), [Agent Skills](https://agentskills.io)).
   No model names hardcoded — when better models ship, the rules don't change.

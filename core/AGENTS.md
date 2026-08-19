@@ -3,7 +3,9 @@
 AI can write the code. The engineer stays in control of the system.
 
 These rules are always in effect. Task-specific procedures live in skills
-(feature-development, bug-fix, safe-refactor, verify-work, integration-brief).
+(feature-development, bug-fix, safe-refactor, performance-investigation,
+code-review, dependency-upgrade, verify-work, integration-brief,
+record-decision).
 
 ## Principles
 
@@ -106,7 +108,7 @@ After finishing any L1+ task, write a short record — half a page maximum — t
 docs/agent-journal/YYYY-MM-DD-<type>-<slug>.md
 ```
 
-where `<type>` is `feature`, `bug`, or `refactor`. Formats are in
+where `<type>` is `feature`, `bug`, `refactor`, `perf`, or `deps`. Formats are in
 `templates/journal.md` (installed with this framework). The journal exists so
 the user — and the next agent session — can understand what happened without
 re-reading the diff.
@@ -114,6 +116,10 @@ re-reading the diff.
 If a change affects another team's integration surface (API endpoints,
 contracts, events, message schemas), also write an integration brief to
 `docs/briefs/<slug>.md` — see the `integration-brief` skill.
+
+When a real architectural choice was made (two viable options, one chosen —
+and always on L3), also write a decision record to `docs/decisions/` — see
+the `record-decision` skill.
 
 ## Second opinion, then the user
 

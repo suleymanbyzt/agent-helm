@@ -104,9 +104,10 @@ if ($Uninstall) {
         }
         Remove-IfOurs "$Src\templates\journal.md" "$Target\templates\journal.md"
         Remove-IfOurs "$Src\templates\integration-brief.md" "$Target\templates\integration-brief.md"
+        Remove-IfOurs "$Src\templates\decision.md" "$Target\templates\decision.md"
         if ((Test-Path "$Target\templates") -and -not (Get-ChildItem "$Target\templates")) { Remove-Item "$Target\templates" }
-        # Journals and briefs are YOUR project history — never deleted.
-        foreach ($d in @("$Target\docs\agent-journal", "$Target\docs\briefs")) {
+        # Journals, briefs, and decisions are YOUR project history — never deleted.
+        foreach ($d in @("$Target\docs\agent-journal", "$Target\docs\briefs", "$Target\docs\decisions")) {
             if (Test-Path $d) {
                 Remove-Item "$d\.gitkeep" -ErrorAction SilentlyContinue
                 if (-not (Get-ChildItem $d)) { Remove-Item $d; Write-Host "  - $d\ (was empty)" }
@@ -190,15 +191,17 @@ foreach ($dest in @(".claude\skills", ".agents\skills")) {
     Write-Host "  + $dest\ ($skillCount skills)"
 }
 
-# 4. Templates + journal/brief directories
-foreach ($dir in @("docs\agent-journal", "docs\briefs", "templates")) {
+# 4. Templates + journal/brief/decision directories
+foreach ($dir in @("docs\agent-journal", "docs\briefs", "docs\decisions", "templates")) {
     New-Item -ItemType Directory -Force -Path "$Target\$dir" | Out-Null
 }
 Copy-Item "$Src\templates\journal.md" "$Target\templates\journal.md"
 Copy-Item "$Src\templates\integration-brief.md" "$Target\templates\integration-brief.md"
+Copy-Item "$Src\templates\decision.md" "$Target\templates\decision.md"
 New-Item -ItemType File -Force -Path "$Target\docs\agent-journal\.gitkeep" | Out-Null
 New-Item -ItemType File -Force -Path "$Target\docs\briefs\.gitkeep" | Out-Null
-Write-Host "  + templates\, docs\agent-journal\, docs\briefs\"
+New-Item -ItemType File -Force -Path "$Target\docs\decisions\.gitkeep" | Out-Null
+Write-Host "  + templates\, docs\agent-journal\, docs\briefs\, docs\decisions\"
 
 Write-Host ""
 Write-Host "Done. Commit the new files so the whole team's agents use the same rules."

@@ -119,9 +119,10 @@ if [ "$ACTION" = "uninstall" ]; then
     rmdir "$TARGET/.claude" "$TARGET/.agents" 2>/dev/null || true
     remove_if_ours "$SRC/templates/journal.md" "$TARGET/templates/journal.md"
     remove_if_ours "$SRC/templates/integration-brief.md" "$TARGET/templates/integration-brief.md"
+    remove_if_ours "$SRC/templates/decision.md" "$TARGET/templates/decision.md"
     rmdir "$TARGET/templates" 2>/dev/null || true
-    # Journals and briefs are YOUR project history — never deleted.
-    for dir in "$TARGET/docs/agent-journal" "$TARGET/docs/briefs"; do
+    # Journals, briefs, and decisions are YOUR project history — never deleted.
+    for dir in "$TARGET/docs/agent-journal" "$TARGET/docs/briefs" "$TARGET/docs/decisions"; do
       if [ -d "$dir" ]; then
         rm -f "$dir/.gitkeep"
         if rmdir "$dir" 2>/dev/null; then
@@ -197,12 +198,13 @@ fi
 copy_skills "$TARGET/.claude/skills"
 copy_skills "$TARGET/.agents/skills"
 
-# 4. Templates + journal/brief directories
-mkdir -p "$TARGET/docs/agent-journal" "$TARGET/docs/briefs" "$TARGET/templates"
+# 4. Templates + journal/brief/decision directories
+mkdir -p "$TARGET/docs/agent-journal" "$TARGET/docs/briefs" "$TARGET/docs/decisions" "$TARGET/templates"
 cp "$SRC/templates/journal.md" "$TARGET/templates/journal.md"
 cp "$SRC/templates/integration-brief.md" "$TARGET/templates/integration-brief.md"
-touch "$TARGET/docs/agent-journal/.gitkeep" "$TARGET/docs/briefs/.gitkeep"
-echo "  + templates/, docs/agent-journal/, docs/briefs/"
+cp "$SRC/templates/decision.md" "$TARGET/templates/decision.md"
+touch "$TARGET/docs/agent-journal/.gitkeep" "$TARGET/docs/briefs/.gitkeep" "$TARGET/docs/decisions/.gitkeep"
+echo "  + templates/, docs/agent-journal/, docs/briefs/, docs/decisions/"
 
 echo ""
 echo "Done. Commit the new files so the whole team's agents use the same rules."
